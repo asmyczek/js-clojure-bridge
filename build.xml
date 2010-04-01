@@ -1,0 +1,50 @@
+<project name="js-clojure-bridge" default="all" basedir=".">
+
+	<property name="bin" location="bin"/>
+
+	<path id="build_path">
+		<fileset dir="lib">
+			<include name="*.jar" />
+		</fileset>
+		<path location="src"/>
+		<path location="test"/>
+		<path location="${bin}"/>
+	</path>
+
+	<target name="init">
+		<mkdir dir="${bin}"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${bin}"/>
+	</target>
+
+	<target name="build" depends="clean, init">
+		<java classname="clojure.lang.Compile" classpathref="build_path">
+			<sysproperty key="clojure.compile.path" value="${bin}"/>
+			<arg value="cljrt"/>
+		</java>
+	</target>
+
+  <target name="test">
+    <java classname="org.mozilla.javascript.tools.shell.Main"
+          classpathref="build_path"
+          dir="${bin}" 
+          fork="true">
+      <arg line="-f ../test/test.js"/>
+		</java>
+	</target>
+
+  <target name="example">
+    <java classname="org.mozilla.javascript.tools.shell.Main"
+          classpathref="build_path"
+          dir="${bin}" 
+          fork="true">
+      <arg line="-f ../src/example.js"/>
+		</java>
+	</target>
+
+  <target name="all" depends="build,test,example"/>
+
+</project>
+
